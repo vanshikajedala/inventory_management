@@ -1,39 +1,34 @@
 package com.example.myapp.controller;
 
-import java.lang.runtime.ObjectMethods;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;          
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.myapp.dto.LoginRequest;
-import com.example.myapp.dto.SignupRequest;
-import com.example.myapp.model.User;
-import com.example.myapp.repo.UserRepository;
+import com.example.myapp.dto.auth.AuthRequest;
+import com.example.myapp.dto.auth.AuthResponse;
+import com.example.myapp.dto.auth.SignupRequest;
+import com.example.myapp.service.AuthService;
 
-@CrossOrigin(origins = "*")
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Validated
 public class AuthController {
 
-    private final UserRepository db;
-
-    // Constructor injection
-    public AuthController(UserRepository db) {
-        this.db = db;
-    }
+    private final AuthService authService;
 
     @PostMapping("/signup")
-    public String signUp(@RequestBody SignupRequest sd) {
-        System.out.println("\n\t signup DATA : " + sd.toString());
-        return "signup success -> {\n\t name: " + sd.getName() +
-                "\n\t email: " + sd.getEmail() + "\n}";
+    public AuthResponse signup(@Valid @RequestBody SignupRequest request) {
+        return authService.signup(request);
     }
 
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody AuthRequest request) {
+        return authService.login(request);
+    }
 }
